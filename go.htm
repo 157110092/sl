@@ -1,5 +1,6 @@
 <html lang="zh-CN">
 <head>
+    <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable">
     <meta content="yes" name="apple-touch-fullscreen">
@@ -96,6 +97,13 @@
             100% { transform: translate(-50%, -50%) rotate(360deg) }
         }
         .content{height:100%;width:100%;position: fixed;left: -2px;top: -2px;}
+        .error-message {
+            color: #f00;
+            text-align: center;
+            width: 200px;
+            margin-top: 120px;
+            font-family: Arial, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -109,68 +117,112 @@
     // 域名验证核心逻辑
     function getDomainFromUrl(url) {
         try {
-            // 解析URL获取主机名（不含协议和路径）
+            console.log("[步骤1] 开始解析URL:", url);
             const urlObj = new URL(url);
-            return urlObj.hostname;
+            let hostname = urlObj.hostname;
+            
+            // 去除开头的www.（不区分大小写）
+            const cleanedHostname = hostname.replace(/^www\./i, '');
+            console.log(`[步骤1] 原始hostname: ${hostname} → 处理后: ${cleanedHostname}`);
+            
+            return cleanedHostname;
         } catch (e) {
-            console.error("URL解析失败:", e);
+            console.error("[步骤1] URL解析失败:", e);
             return null;
         }
     }
 
     function verifyAndRedirect(targetUrl) {
+        console.log("[验证流程开始] 目标URL:", targetUrl);
+        
         // 1. 提取目标URL的域名
         const targetDomain = getDomainFromUrl(targetUrl);
         if (!targetDomain) {
-            console.log("无效的目标URL，跳转到默认页面");
-            window.location.href = "https://abc.com";
+            console.log("[步骤1] 无效的目标URL，停止跳转");
+            showError("无效的目标URL格式");
             return;
         }
-        console.log("待验证域名:", targetDomain);
-
+        
+        console.log("[步骤1] 提取的目标域名:", targetDomain);
+        
         // 2. 请求允许的域名列表（TXT文件）
-        fetch("https://www.shoulewl.com/fanghong.txt") // 替换为实际的TXT文件地址
+        console.log("[步骤2] 开始请求域名白名单文件:", "https://www.shoulewl.com/fanghong.txt");
+        fetch("https://www.shoulewl.com/fanghong.txt")
             .then(response => {
+                console.log("[步骤2] 收到TXT响应:", response.status, response.statusText);
+                
                 if (!response.ok) {
-                    throw new Error("TXT文件请求失败");
+                    throw new Error(`TXT文件请求失败: ${response.status} ${response.statusText}`);
                 }
-                return response.text();
+                
+                // 检查响应头是否包含charset
+                const contentType = response.headers.get('content-type');
+                if (contentType && !contentType.includes('charset')) {
+                    console.log("[步骤2] 响应头未指定charset，手动解析为UTF-8");
+                    return response.arrayBuffer().then(buffer => {
+                        return new TextDecoder('utf-8').decode(buffer);
+                    });
+                } else {
+                    return response.text();
+                }
             })
             .then(txtContent => {
-                // 3. 解析TXT文件内容（用;分割域名）
+                console.log("[步骤2] TXT文件原始内容:", txtContent);
+                
+                // 3. 解析TXT文件内容
+                console.log("[步骤3] 开始解析域名列表...");
                 const allowedDomains = txtContent
+                    .replace(/\s+/g, '') // 去除所有空白字符
                     .split(";")
-                    .map(domain => domain.trim()) // 去除空格
                     .filter(domain => domain); // 过滤空值
-                console.log("允许的域名列表:", allowedDomains);
-
+                
+                console.log("[步骤3] 解析后的允许域名列表:", allowedDomains);
+                
                 // 4. 验证域名是否在允许列表中
-                if (allowedDomains.includes(targetDomain)) {
-                    console.log("域名验证通过，允许跳转");
+                const isAllowed = allowedDomains.includes(targetDomain);
+                console.log(`[步骤4] 域名匹配结果: ${targetDomain} → ${isAllowed ? '允许' : '拒绝'}`);
+                
+                if (isAllowed) {
+                    console.log("[步骤4] 域名验证通过，允许跳转");
                     loadTargetUrl(targetUrl);
                 } else {
-                    console.log("域名不在允许列表中，跳转到默认页面");
-                    window.location.href = "https://abc.com";
+                    console.log("[步骤4] 域名不在允许列表中，停止跳转");
+                    showError("域名未授权");
                 }
             })
             .catch(error => {
-                console.error("验证过程出错:", error);
-                // 请求失败时默认跳转到abc.com
-                window.location.href = "https://abc.com";
+                console.error("[步骤2] 验证过程出错:", error);
+                showError("无法获取域名白名单");
             });
     }
 
     function loadTargetUrl(url) {
+        console.log("[跳转流程] 准备加载目标URL:", url);
+        
         // 隐藏加载动画
-        const container = document.querySelector(".container"); // 修复原代码的选择器错误
+        const container = document.querySelector(".container");
         setTimeout(() => {
+            console.log("[跳转流程] 隐藏加载动画");
             container.style.display = "none";
         }, 1500);
 
         // 加载目标URL
         const html = `<iframe class="content" onload="bindMouseWhee(this)" src="${url}"></iframe>`;
         document.writeln(html);
-        console.log("跳转成功:", url);
+        console.log("[跳转流程] 已注入iframe，等待加载:", url);
+    }
+
+    function showError(message) {
+        // 显示错误信息但不跳转
+        const container = document.querySelector(".container");
+        container.innerHTML = `
+            <div class="error-message">
+                <h3>验证失败</h3>
+                <p>${message}</p>
+                <p>请检查域名是否在白名单中</p>
+            </div>
+        `;
+        container.style.animation = "none"; // 停止动画
     }
 
     // 初始逻辑执行
@@ -178,23 +230,27 @@
     const encodedParam = urlParams.get('c');
     let tureurl = "";
 
+    console.log("[初始化] URL参数:", urlParams.toString());
+    console.log("[初始化] 编码后的目标URL:", encodedParam);
+
     try {
         tureurl = atob(encodedParam); // 解码参数
+        console.log("[初始化] 解码后的目标URL:", tureurl);
     } catch (e) {
-        console.error("参数解码失败:", e);
-        window.location.href = "https://abc.com";
+        console.error("[初始化] 参数解码失败:", e);
+        showError("URL参数解码失败");
     }
 
     // 检查是否包含有效的HTTP协议
     if (tureurl.includes("http")) {
         verifyAndRedirect(tureurl);
     } else {
-        console.log("目标URL不包含HTTP协议，跳转到默认页面");
-        window.location.href = "https://abc.com";
+        console.log("[初始化] 目标URL不包含HTTP协议，停止跳转");
+        showError("无效的URL协议");
     }
 </script>
 <script>
-    // 鼠标滚轮事件绑定（保持原有功能）
+    // 鼠标滚轮事件绑定
     const firefox = navigator.userAgent.indexOf('Firefox') !== -1;
     
     function MouseWheel(e, doc) {
@@ -216,7 +272,9 @@
                     MouseWheel(e || ifr.contentWindow.event, doc);
                 };
             }
+            console.log("[iframe] 成功绑定鼠标滚轮事件");
         } catch (e) {
+            console.error("[iframe] 绑定鼠标滚轮事件失败:", e);
             alert('浏览器无法获取iframe加载document: ' + e);
         }
     }
