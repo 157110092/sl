@@ -1,21 +1,12 @@
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable">
     <meta content="yes" name="apple-touch-fullscreen">
     <meta content="black" name="apple-mobile-web-app-status-bar-style">
     <meta content="320" name="MobileOptimized">
-    <title>跳转验证中</title>
+    <title></title>
     <style>
-        /* 关键：设置根元素和body全屏高度 */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden; /* 隐藏页面滚动条，避免iframe外出现滚动 */
-        }
-
         .container {
             width: 100px;
             height: 100px;
@@ -23,7 +14,6 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 100; /* 确保加载动画在最上层 */
         }
 
         .dot {
@@ -91,6 +81,12 @@
         }
 
         .container {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             animation: rotate-move 2s ease-in-out infinite;
         }
 
@@ -100,147 +96,121 @@
             100% { transform: translate(-50%, -50%) rotate(360deg) }
         }
 
-        /* 修复iframe全屏样式 */
-        .content {
-            height: 100vh; /* 基于视口高度100% */
-            width: 100vw;  /* 基于视口宽度100% */
+        .content{
+            height:100%;
+            width:100%;
             position: fixed;
-            left: 0;       /* 移除负偏移，避免显示不全 */
-            top: 0;
-            border: none;  /* 移除默认边框 */
-            z-index: 10;   /* 确保在加载动画下方 */
+            left: -2px;
+            top: -2px;
         }
 
-        .error-message {
-            color: #f00;
-            text-align: center;
-            width: 200px;
-            margin-top: 120px;
+        /* 未授权提示样式 */
+        .unauthorized提示 {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: Arial, sans-serif;
+            font-size: 20px;
+            z-index: 9999;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
+    <div class="container">
+        <div class="dot dot-1"></div>
+        <div class="dot dot-2"></div>
+        <div class="dot dot-3"></div>
+    </div>
 
-<div class="container">
-    <div class="dot dot-1"></div>
-    <div class="dot dot-2"></div>
-    <div class="dot dot-3"></div>
-</div>
-<script>
-    // 域名验证核心逻辑
-    function getDomainFromUrl(url) {
-        try {
-            console.log("[步骤1] 开始解析URL:", url);
-            const urlObj = new URL(url);
-            let hostname = urlObj.hostname;
-            const cleanedHostname = hostname.replace(/^www\./i, '');
-            console.log(`[步骤1] 原始hostname: ${hostname} → 处理后: ${cleanedHostname}`);
-            return cleanedHostname;
-        } catch (e) {
-            console.error("[步骤1] URL解析失败:", e);
-            return null;
-        }
-    }
+    <script>
+        // ===== 域名验证配置 =====
+        // 替换为你的TXT授权域名列表，用分号分隔
+        const allowedDomainsTxt = "shoulewl.com;test.com;yourdomain.com"; 
+        // ========================
 
-    function verifyAndRedirect(targetUrl) {
-        console.log("[验证流程开始] 目标URL:", targetUrl);
-        const targetDomain = getDomainFromUrl(targetUrl);
-        if (!targetDomain) {
-            console.log("[步骤1] 无效的目标URL，停止跳转");
-            showError("无效的目标URL格式");
-            return;
+        // 获取当前访问域名
+        const currentDomain = window.location.hostname;
+        // 解析授权域名列表
+        const allowedDomains = allowedDomainsTxt.split(';')
+            .map(domain => domain.trim())
+            .filter(domain => domain); // 过滤空值
+
+        // 验证当前域名是否授权
+        const isAuthorized = allowedDomains.includes(currentDomain);
+
+        if (!isAuthorized) {
+            // 未授权：显示提示并阻止加载
+            const container = document.querySelector('.container');
+            container.style.display = 'none'; // 隐藏加载动画
+            
+            const提示Div = document.createElement('div');
+            提示Div.className = 'unauthorized提示';
+            提示Div.innerHTML = `
+                <h2>未授权访问</h2>
+                <p>当前域名 (${currentDomain}) 未在授权列表中</p>
+                <p>请使用授权域名访问</p>
+            `;
+            document.body.appendChild(提示Div);
+        } else {
+            // 已授权：执行原有逻辑
+            var urlParams = new URLSearchParams(window.location.search);
+            var encodedParam = urlParams.get('c');
+            var trueUrl = encodedParam ? atob(encodedParam) : '';
+
+            if (trueUrl.includes("http")) {
+                var container = document.querySelector('.container');
+                setTimeout(function() {
+                    container.style.display = "none";
+                }, 1500);
+
+                var html = '<iframe class="content" onload="bindMouseWhee(this)" src="' + trueUrl + '"></iframe>';
+                document.writeln(html);
+                console.log("授权域名访问，加载目标URL：", trueUrl);
+            } else {
+                console.log("未找到有效URL参数");
+                const container = document.querySelector('.container');
+                container.style.display = 'none';
+                alert('未找到有效访问地址');
+            }
         }
-        console.log("[步骤1] 提取的目标域名:", targetDomain);
+    </script>
+
+    <script>
+        var firefox = navigator.userAgent.indexOf('Firefox') != -1;
         
-        console.log("[步骤2] 开始请求域名白名单文件:", "https://www.s1ong.txt");
-        fetch("https://157110092.github.io/sl/fanghong.txt")
-            .then(response => {
-                console.log("[步骤2] 收到TXT响应:", response.status, response.statusText);
-                if (!response.ok) {
-                    throw new Error(`TXT文件请求失败: ${response.status} ${response.statusText}`);
-                }
-                const contentType = response.headers.get('content-type');
-                if (contentType && !contentType.includes('charset')) {
-                    console.log("[步骤2] 响应头未指定charset，手动解析为UTF-8");
-                    return response.arrayBuffer().then(buffer => new TextDecoder('utf-8').decode(buffer));
+        function MouseWheel(e, doc) {
+            e.preventDefault && e.preventDefault();
+            e.returnValue = false;
+            var up = firefox && e.detail < 0 || e.wheelDelta > 0;
+            doc.body.scrollTop = doc.documentElement.scrollTop += up ? -50 : 50;
+        }
+
+        function bindMouseWhee(ifr) {
+            try {
+                var doc = ifr.contentWindow.document;
+                if (firefox) {
+                    doc.addEventListener('DOMMouseScroll', function(e) {
+                        MouseWheel(e, doc);
+                    }, false);
                 } else {
-                    return response.text();
+                    doc.onmousewheel = function(e) {
+                        MouseWheel(e || ifr.contentWindow.event, doc);
+                    };
                 }
-            })
-            .then(txtContent => {
-                console.log("[步骤2] TXT文件原始内容:", txtContent);
-                const allowedDomains = txtContent
-                    .replace(/\s+/g, '')
-                    .split(";")
-                    .filter(domain => domain);
-                console.log("[步骤3] 解析后的允许域名列表:", allowedDomains);
-                
-                const isAllowed = allowedDomains.includes(targetDomain);
-                console.log(`[步骤4] 域名匹配结果: ${targetDomain} → ${isAllowed ? '允许' : '拒绝'}`);
-                
-                if (isAllowed) {
-                    console.log("[步骤4] 域名验证通过，允许跳转");
-                    loadTargetUrl(targetUrl);
-                } else {
-                    console.log("[步骤4] 域名不在允许列表中，停止跳转");
-                    showError("域名未授权");
-                }
-            })
-            .catch(error => {
-                console.error("[步骤2] 验证过程出错:", error);
-                showError("无法获取域名白名单");
-            });
-    }
-
-    function loadTargetUrl(url) {
-        console.log("[跳转流程] 准备加载目标URL:", url);
-        const container = document.querySelector(".container");
-        setTimeout(() => {
-            console.log("[跳转流程] 隐藏加载动画");
-            container.style.display = "none";
-        }, 1500);
-
-        // 添加iframe（使用修复后的样式）
-        const html = `<iframe class="content" src="${url}"></iframe>`;
-        document.writeln(html);
-        console.log("[跳转流程] 已注入iframe，等待加载:", url);
-    }
-
-    function showError(message) {
-        const container = document.querySelector(".container");
-        container.innerHTML = `
-            <div class="error-message">
-                <h3>验证失败</h3>
-                <p>${message}</p>
-                <p>请检查域名是否在白名单中</p>
-            </div>
-        `;
-        container.style.animation = "none";
-    }
-
-    // 初始逻辑执行
-    const urlParams = new URLSearchParams(window.location.search);
-    const encodedParam = urlParams.get('c');
-    let tureurl = "";
-
-    console.log("[初始化] URL参数:", urlParams.toString());
-    console.log("[初始化] 编码后的目标URL:", encodedParam);
-
-    try {
-        tureurl = atob(encodedParam);
-        console.log("[初始化] 解码后的目标URL:", tureurl);
-    } catch (e) {
-        console.error("[初始化] 参数解码失败:", e);
-        showError("URL参数解码失败");
-    }
-
-    if (tureurl.includes("http")) {
-        verifyAndRedirect(tureurl);
-    } else {
-        console.log("[初始化] 目标URL不包含HTTP协议，停止跳转");
-        showError("无效的URL协议");
-    }
-</script>
+            } catch (e) {
+                alert('无法获取iframe内容: ' + e.message);
+            }
+        }
+    </script>
 </body>
 </html>
