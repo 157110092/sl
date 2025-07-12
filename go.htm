@@ -1,10 +1,11 @@
-<html lang="zh-CN"><head>
+<html lang="zh-CN">
+<head>
     <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" name="viewport">
     <meta content="yes" name="apple-mobile-web-app-capable">
     <meta content="yes" name="apple-touch-fullscreen">
     <meta content="black" name="apple-mobile-web-app-status-bar-style">
     <meta content="320" name="MobileOptimized">
-    <title></title>
+    <title>跳转验证中</title>
     <style>
         .container {
             width: 100px;
@@ -46,25 +47,11 @@
         }
 
         @keyframes dot-3-move {
-            20% {
-                transform: scale(1)
-            }
-
-            45% {
-                transform: translateY(-18px) scale(.45)
-            }
-
-            60% {
-                transform: translateY(-25px) scale(.45)
-            }
-
-            80% {
-                transform: translateY(-25px) scale(.45)
-            }
-
-            100% {
-                transform: translateY(0px) scale(1)
-            }
+            20% { transform: scale(1) }
+            45% { transform: translateY(-18px) scale(.45) }
+            60% { transform: translateY(-25px) scale(.45) }
+            80% { transform: translateY(-25px) scale(.45) }
+            100% { transform: translateY(0px) scale(1) }
         }
 
         .dot-2 {
@@ -78,47 +65,19 @@
         }
 
         @keyframes dot-2-move {
-            20% {
-                transform: scale(1)
-            }
-
-            45% {
-                transform: translate(-16px, 12px) scale(.45)
-            }
-
-            60% {
-                transform: translate(-20px, 15px) scale(.45)
-            }
-
-            80% {
-                transform: translate(-20px, 15px) scale(.45)
-            }
-
-            100% {
-                transform: translateY(0px) scale(1)
-            }
+            20% { transform: scale(1) }
+            45% { transform: translate(-16px, 12px) scale(.45) }
+            60% { transform: translate(-20px, 15px) scale(.45) }
+            80% { transform: translate(-20px, 15px) scale(.45) }
+            100% { transform: translateY(0px) scale(1) }
         }
 
         @keyframes dot-1-move {
-            20% {
-                transform: scale(1)
-            }
-
-            45% {
-                transform: translate(16px, 12px) scale(.45)
-            }
-
-            60% {
-                transform: translate(20px, 15px) scale(.45)
-            }
-
-            80% {
-                transform: translate(20px, 15px) scale(.45)
-            }
-
-            100% {
-                transform: translateY(0px) scale(1)
-            }
+            20% { transform: scale(1) }
+            45% { transform: translate(16px, 12px) scale(.45) }
+            60% { transform: translate(20px, 15px) scale(.45) }
+            80% { transform: translate(20px, 15px) scale(.45) }
+            100% { transform: translateY(0px) scale(1) }
         }
 
         .container {
@@ -132,159 +91,14 @@
         }
 
         @keyframes rotate-move {
-            55% {
-                transform: translate(-50%, -50%) rotate(0deg)
-            }
-
-            80% {
-                transform: translate(-50%, -50%) rotate(360deg)
-            }
-
-            100% {
-                transform: translate(-50%, -50%) rotate(360deg)
-            }
-        }
-        .container {
-            width: 100px;
-            height: 100px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            background-color: #000;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            margin: auto;
-        }
-
-        .dot-3 {
-            background-color: #f74d75;
-        }
-
-        .dot-2 {
-            background-color: #10beae;
-        }
-
-        .dot-1 {
-            background-color: #ffe386;
-        }
-
-        .dot-3 {
-            background-color: #f74d75;
-            animation: dot-3-move 2s ease infinite;
-        }
-
-        @keyframes dot-3-move {
-            20% {
-                transform: scale(1)
-            }
-
-            45% {
-                transform: translateY(-18px) scale(.45)
-            }
-
-            60% {
-                transform: translateY(-25px) scale(.45)
-            }
-
-            80% {
-                transform: translateY(-25px) scale(.45)
-            }
-
-            100% {
-                transform: translateY(0px) scale(1)
-            }
-        }
-
-        .dot-2 {
-            background-color: #10beae;
-            animation: dot-2-move 2s ease infinite;
-        }
-
-        .dot-1 {
-            background-color: #ffe386;
-            animation: dot-1-move 2s ease infinite;
-        }
-
-        @keyframes dot-2-move {
-            20% {
-                transform: scale(1)
-            }
-
-            45% {
-                transform: translate(-16px, 12px) scale(.45)
-            }
-
-            60% {
-                transform: translate(-20px, 15px) scale(.45)
-            }
-
-            80% {
-                transform: translate(-20px, 15px) scale(.45)
-            }
-
-            100% {
-                transform: translateY(0px) scale(1)
-            }
-        }
-
-        @keyframes dot-1-move {
-            20% {
-                transform: scale(1)
-            }
-
-            45% {
-                transform: translate(16px, 12px) scale(.45)
-            }
-
-            60% {
-                transform: translate(20px, 15px) scale(.45)
-            }
-
-            80% {
-                transform: translate(20px, 15px) scale(.45)
-            }
-
-            100% {
-                transform: translateY(0px) scale(1)
-            }
-        }
-
-        .container {
-            width: 100px;
-            height: 100px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: rotate-move 2s ease-in-out infinite;
-        }
-
-        @keyframes rotate-move {
-            55% {
-                transform: translate(-50%, -50%) rotate(0deg)
-            }
-
-            80% {
-                transform: translate(-50%, -50%) rotate(360deg)
-            }
-
-            100% {
-                transform: translate(-50%, -50%) rotate(360deg)
-            }
+            55% { transform: translate(-50%, -50%) rotate(0deg) }
+            80% { transform: translate(-50%, -50%) rotate(360deg) }
+            100% { transform: translate(-50%, -50%) rotate(360deg) }
         }
         .content{height:100%;width:100%;position: fixed;left: -2px;top: -2px;}
     </style>
-</head><body>
+</head>
+<body>
 
 <div class="container">
     <div class="dot dot-1"></div>
@@ -292,39 +106,118 @@
     <div class="dot dot-3"></div>
 </div>
 <script>
-    var urlParams = new URLSearchParams(window.location.search);
-    var encodedParam = urlParams.get('c');
-    var tureurl = atob(encodedParam);
-    if (tureurl.includes("http")) {
-        var square = document.getElementById("container");
-        setTimeout(function() {
-            square.style.display = "none";
+    // 域名验证核心逻辑
+    function getDomainFromUrl(url) {
+        try {
+            // 解析URL获取主机名（不含协议和路径）
+            const urlObj = new URL(url);
+            return urlObj.hostname;
+        } catch (e) {
+            console.error("URL解析失败:", e);
+            return null;
+        }
+    }
+
+    function verifyAndRedirect(targetUrl) {
+        // 1. 提取目标URL的域名
+        const targetDomain = getDomainFromUrl(targetUrl);
+        if (!targetDomain) {
+            console.log("无效的目标URL，跳转到默认页面");
+            window.location.href = "https://abc.com";
+            return;
+        }
+        console.log("待验证域名:", targetDomain);
+
+        // 2. 请求允许的域名列表（TXT文件）
+        fetch("https://www.shoulewl.com/fanghong.txt") // 替换为实际的TXT文件地址
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("TXT文件请求失败");
+                }
+                return response.text();
+            })
+            .then(txtContent => {
+                // 3. 解析TXT文件内容（用;分割域名）
+                const allowedDomains = txtContent
+                    .split(";")
+                    .map(domain => domain.trim()) // 去除空格
+                    .filter(domain => domain); // 过滤空值
+                console.log("允许的域名列表:", allowedDomains);
+
+                // 4. 验证域名是否在允许列表中
+                if (allowedDomains.includes(targetDomain)) {
+                    console.log("域名验证通过，允许跳转");
+                    loadTargetUrl(targetUrl);
+                } else {
+                    console.log("域名不在允许列表中，跳转到默认页面");
+                    window.location.href = "https://abc.com";
+                }
+            })
+            .catch(error => {
+                console.error("验证过程出错:", error);
+                // 请求失败时默认跳转到abc.com
+                window.location.href = "https://abc.com";
+            });
+    }
+
+    function loadTargetUrl(url) {
+        // 隐藏加载动画
+        const container = document.querySelector(".container"); // 修复原代码的选择器错误
+        setTimeout(() => {
+            container.style.display = "none";
         }, 1500);
-        var html='<iframe class="content" οnlοad="bindMouseWhee(this)" src='+tureurl+'></iframe>';
+
+        // 加载目标URL
+        const html = `<iframe class="content" onload="bindMouseWhee(this)" src="${url}"></iframe>`;
         document.writeln(html);
-        console.log(tureurl);
+        console.log("跳转成功:", url);
+    }
+
+    // 初始逻辑执行
+    const urlParams = new URLSearchParams(window.location.search);
+    const encodedParam = urlParams.get('c');
+    let tureurl = "";
+
+    try {
+        tureurl = atob(encodedParam); // 解码参数
+    } catch (e) {
+        console.error("参数解码失败:", e);
+        window.location.href = "https://abc.com";
+    }
+
+    // 检查是否包含有效的HTTP协议
+    if (tureurl.includes("http")) {
+        verifyAndRedirect(tureurl);
     } else {
-        console.log("nourls");
+        console.log("目标URL不包含HTTP协议，跳转到默认页面");
+        window.location.href = "https://abc.com";
     }
 </script>
 <script>
-    var firefox = navigator.userAgent.indexOf('Firefox') != -1;
-    function MouseWheel(e,doc) {
-        e.preventDefault && e.preventDefault(), e.returnValue = false;
-        var up = firefox && e.detail < 0 || e.wheelDelta > 0;
+    // 鼠标滚轮事件绑定（保持原有功能）
+    const firefox = navigator.userAgent.indexOf('Firefox') !== -1;
+    
+    function MouseWheel(e, doc) {
+        e.preventDefault && e.preventDefault();
+        e.returnValue = false;
+        const up = firefox && e.detail < 0 || e.wheelDelta > 0;
         doc.body.scrollTop = doc.documentElement.scrollTop += up ? -50 : 50;
     }
 
     function bindMouseWhee(ifr) {
         try {
-            var doc = ifr.contentWindow.document;
-            firefox ? doc.addEventListener('DOMMouseScroll', function (e) {
-                MouseWheel(e, doc)
-            }, false) : (doc.onmousewheel = function (e) {
-                MouseWheel(e || ifr.contentWindow.event, doc)
-            });
+            const doc = ifr.contentWindow.document;
+            if (firefox) {
+                doc.addEventListener('DOMMouseScroll', function (e) {
+                    MouseWheel(e, doc);
+                }, false);
+            } else {
+                doc.onmousewheel = function (e) {
+                    MouseWheel(e || ifr.contentWindow.event, doc);
+                };
+            }
         } catch (e) {
-            alert('璺ㄥ煙鏃犳硶鑾峰彇iframe鍔犺浇document' + e);
+            alert('浏览器无法获取iframe加载document: ' + e);
         }
     }
 </script>
